@@ -1,5 +1,11 @@
 package com.io.AddressBookIO;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -53,7 +59,7 @@ public class AddressBookMain {
 	 * @return ContactDetails, returns object of type ContactDetails after taking
 	 *         i/p from user
 	 */
-	private static ContactDetails getContactDetails() {
+	public static ContactDetails getContactDetails() {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter the contact details");
 		System.out.println("Enter the first name");
@@ -93,7 +99,7 @@ public class AddressBookMain {
 	/**
 	 * addContactDetails(), adds a person's ContactDetails to the AddressBook
 	 */
-	private void addContactDetails(ContactDetails contactDetails) {
+	public void addContactDetails(ContactDetails contactDetails) {
 		if (this.duplicateFound(contactDetails))
 			return;
 		if (cityToContacts.containsKey(contactDetails.getCity()))
@@ -270,7 +276,7 @@ public class AddressBookMain {
 	/**
 	 * @return AddressBookMainUC5, returns an AddressBook with only a name
 	 */
-	private static AddressBookMain getAddressBook() {
+	public static AddressBookMain getAddressBook() {
 		AddressBookMain addressBook = new AddressBookMain();
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter the name for the addressbook");
@@ -456,6 +462,53 @@ public class AddressBookMain {
 		}
 	}
 
+	public static boolean writeToFile(String filePath) {
+		Enumeration<String> keys = nameToAddressBook.keys();
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			AddressBookMain addressBook = nameToAddressBook.get(key);
+			for (int i = 0; i < addressBook.contactBook.size(); i++) {
+				Path path = Paths.get(filePath);
+				if (!Files.exists(path))
+					return false;
+				try {
+					Files.write(path, (addressBook.contactBook.get(i).toString()).getBytes(),
+							StandardOpenOption.APPEND);
+					return true;
+				} catch (IOException e) {
+					System.out.println("The file was not found");
+				}
+			}
+		}
+		return false;
+	}
+
+	public static List<ContactDetails> readFromFile(String filePath) {
+		Path path = Paths.get(filePath);
+		List<ContactDetails> addressBook = new ArrayList<>();
+		try {
+			String fileContent = new String(Files.readAllBytes(path));
+			String[] contacts = fileContent.split("\n");
+			for (String contact : contacts) {
+				String[] details = contact.split(",");
+				String firstName = details[0].split(":")[1];
+				String lastName = details[1].split(":")[1];
+				String address = details[2].split(":")[1];
+				String city = details[3].split(":")[1];
+				String state = details[4].split(":")[1];
+				int zip = Integer.parseInt(details[5].split(":")[1]);
+				String phoneNumber = details[6].split(":")[1];
+				String email = details[7].split(":")[1];
+				addressBook.add(new ContactDetails(firstName, lastName, address, city, state, zip, phoneNumber, email));
+			}
+			System.out.println(addressBook);
+			return addressBook;
+		} catch (IOException e) {
+			System.out.println("The mentioned directory was not found");
+		}
+		return null;
+	}
+
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Welcome to Address Book Program");
@@ -478,6 +531,7 @@ public class AddressBookMain {
 		sortByPersonName();
 		sortByStateCityPin();
 		System.out.println("Thank You for using the AddressBook Program");
+		writeToFile("C:/IO/IO.txt");
+		readFromFile("C:/IO/IO.txt");
 	}
-
 }
