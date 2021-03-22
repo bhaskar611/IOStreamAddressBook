@@ -1,8 +1,6 @@
 package com.io.AddressBookIO;
 
 
-
-
 public class ContactDetails{
 	private String firstName;
 	private String lastName;
@@ -12,6 +10,26 @@ public class ContactDetails{
 	private int zip;
 	private String phoneNumber;
 	private String email;
+	
+	/**
+	 * @param firstName , firstName of the person
+	 * @param lastName , lastName  of the person
+	 * @param address , address  of the person
+	 * @param city , city in which he resides
+	 * @param state , state in which he resides
+	 * @param zip , zip of the city in which he resides
+	 * @param phoneNumber , phoneNumber of the person
+	 * @param email , email of the person
+	 */
+	
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		ContactDetails otherContact  = (ContactDetails)obj;
+		String name1 = this.getFirstName()+" "+this.getLastName();
+		String name2 = otherContact.getFirstName()+" "+otherContact.getLastName();
+		return (name1.equals(name2));
+	}
 	
 	
 	public ContactDetails(String firstName,String lastName,
@@ -127,7 +145,7 @@ public class ContactDetails{
 	 */
 	@Override
 	public String toString() {
-		return ("Name : "+firstName+" "+lastName+"\n"
+		return ("\nName : "+firstName+" "+lastName+"\n"
 				+ "Address : "+ address+", "+city+", "+state+"("+zip+")\n"
 						+ "Phone No. "+phoneNumber+"\n"
 								+ "Email : "+email  );
